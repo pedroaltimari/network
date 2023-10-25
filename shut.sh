@@ -35,3 +35,5 @@ expect "CBS220>"
 # Feche a sessão telnet
 send "exit\r"
 expect eof
+
+# Eu usei esse script juntamente ao crontab em meu Linux Server

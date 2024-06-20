@@ -1,8 +1,8 @@
 # SUBNETS
 
 <tr>
-CIDR	  MÁSCARA DE SUB-REDE	   Nº DE ENDEREÇOS IP	   ENDEREÇOS IP USÁVEIS
-/32	    255.255.255.255	    	 1	                   1
+  <th> CIDR	  MÁSCARA DE SUB-REDE	   Nº DE ENDEREÇOS IP	   ENDEREÇOS IP USÁVEIS </th>
+  <th> /32	    255.255.255.255	    	 1	                   1 </th>
 /31	    255.255.255.254	    	 2	                   2*
 /30	    255.255.255.252		     4	                   2
 /29	    255.255.255.248	     	 8	                   6

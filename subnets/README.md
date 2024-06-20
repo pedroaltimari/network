@@ -1,5 +1,6 @@
 # SUBNETS
 
+<tr>
 CIDR	  MÁSCARA DE SUB-REDE	   Nº DE ENDEREÇOS IP	   ENDEREÇOS IP USÁVEIS
 /32	    255.255.255.255	    	 1	                   1
 /31	    255.255.255.254	    	 2	                   2*
@@ -34,3 +35,4 @@ CIDR	  MÁSCARA DE SUB-REDE	   Nº DE ENDEREÇOS IP	   ENDEREÇOS IP USÁVEIS
 /2	    192.0.0.0	             1,073,741,824	       1,073,741,822
 /1	    128.0.0.0	             2,147,483,648	       2,147,483,646
 /0	    0.0.0.0	               4,294,967,296	       4,294,967,294
+</tr>

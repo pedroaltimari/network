@@ -1,8 +1,8 @@
 # SUBNETS
 
-|CIDR|	  MÁSCARA DE SUB-REDE	   Nº DE ENDEREÇOS IP	   ENDEREÇOS IP USÁVEIS
-|----|
-|/32 |    255.255.255.255	    	 1	                   1 </th>
+<table>
+  <td>CIDR	  MÁSCARA DE SUB-REDE	   Nº DE ENDEREÇOS IP	   ENDEREÇOS IP USÁVEIS
+    <tr>/32    255.255.255.255	    	 1	                   1 </tr>
 |/31 |	    255.255.255.254	    	 2	                   2*
 |/30 |	    255.255.255.252		     4	                   2
 |/29 |	    255.255.255.248	     	 8	                   6
@@ -35,9 +35,5 @@
 |/2  |	    192.0.0.0	             1,073,741,824	       1,073,741,822
 |/1  |	    128.0.0.0	             2,147,483,648	       2,147,483,646
 |/0  | 	    0.0.0.0	               4,294,967,296	       4,294,967,294
-<hr>
-| Nome  | Idade | Cidade   |
-|-------|-------|----------|
-| João  | 25    | São Paulo|
-| Maria | 30    | Rio de Janeiro |
-| Pedro | 28    | Belo Horizonte |
+  </td>
+</table>

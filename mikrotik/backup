@@ -1,0 +1,11 @@
+/system script
+add name="backup_diario" source="
+:log info \"Iniciando o backup diário...\"
+/system backup save name=backup_mikrotik
+:delay 5
+/tool fetch address=192.168.1.100 src-path=backup_mikrotik.backup user=usuario password=senha upload=yes dst-path=backup_mikrotik_$(/system clock get time).backup
+:log info \"Backup enviado para o servidor.\"
+"
+
+/system scheduler
+add name="backup_diario" start-time=22:00:00 interval=1d on-event="backup_diario"

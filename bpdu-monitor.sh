@@ -19,7 +19,7 @@ while IFS= read -r linha; do
     arquivo=$(grep -Ril "$mac" \
         /etc/pve/qemu-server/ /etc/pve/lxc/ 2>/dev/null |
         head -n1)
-
+ 
     if [[ "$arquivo" =~ /qemu-server/([0-9]+)\.conf ]]; then
         origem="VM ${BASH_REMATCH[1]}"
     elif [[ "$arquivo" =~ /lxc/([0-9]+)\.conf ]]; then

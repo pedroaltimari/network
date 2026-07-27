@@ -1,11 +1,125 @@
-/system script
-add name="backup_diario" source="
-:log info \"Iniciando o backup diário...\"
-/system backup save name=backup_mikrotik
-:delay 5
-/tool fetch address=192.168.1.100 src-path=backup_mikrotik.backup user=usuario password=senha upload=yes dst-path=backup_mikrotik_$(/system clock get time).backup
-:log info \"Backup enviado para o servidor.\"
-"
+:log warning "********** INICIO-BACKUP-MIKROTIK **********"
 
-/system scheduler
-add name="backup_diario" start-time=22:00:00 interval=1d on-event="backup_diario"
+# ===== CONFIGURACAO =====
+:local host ""
+:local usuario ""
+:local senha ""
+:local diretorio ""
+
+# ===== IDENTIFICACAO =====
+:local identifica [/system identity get name]
+
+# ===== DATA =====
+:local meses {"jan";"feb";"mar";"apr";"may";"jun";"jul";"aug";"sep";"oct";"nov";"dec"}
+:local data [/system clock get date]
+:local dia
+:local mes
+:local ano
+
+:if ([:pick $data 3 4] = "/") do={
+    :local mestxt [:pick $data 0 3]
+    :set dia [:pick $data 4 6]
+    :set ano [:pick $data 7 11]
+    :set mes ([:find $meses $mestxt] + 1)
+    :if ($mes < 10) do={
+        :set mes ("0" . $mes)
+    }
+} else={
+    :set ano [:pick $data 0 4]
+    :set mes [:pick $data 5 7]
+    :set dia [:pick $data 8 10]
+}
+
+:local nome ($ano . "-" . $mes . "-" . $dia . "." . $identifica)
+:local arquivoBackup ($nome . ".backup")
+:local arquivoExport ($nome . ".rsc")
+:local backupGerado false
+:local exportGerado false
+:local backupEnviado false
+:local exportEnviado false
+
+# ===== GERAR BACKUP BINARIO =====
+:do {
+    /system backup save name=$nome
+    :set backupGerado true
+    :log info ("BACKUP-GERADO-OK-" . $identifica)
+} on-error={
+    :log error ("BACKUP-GERACAO-FALHOU-" . $identifica)
+}
+
+# ===== GERAR EXPORT =====
+:do {
+    /export file=$nome
+    :set exportGerado true
+    :log info ("EXPORT-GERADO-OK-" . $identifica)
+} on-error={
+    :log error ("EXPORT-GERACAO-FALHOU-" . $identifica)
+}
+
+:delay 3s
+
+# ===== ENVIAR BACKUP =====
+:if ($backupGerado = true) do={
+    :do {
+        /tool fetch \
+            address=$host \
+            port=21 \
+            mode=ftp \
+            upload=yes \
+            user=$usuario \
+            password=$senha \
+            src-path=$arquivoBackup \
+            dst-path=($diretorio . "/" . $arquivoBackup)
+        :set backupEnviado true
+        :log info ("BACKUP-ENVIO-OK-" . $identifica)
+
+    } on-error={
+        :log error ("BACKUP-ENVIO-FALHOU-" . $identifica)
+    }
+}
+
+# ===== ENVIAR EXPORT =====
+:if ($exportGerado = true) do={
+    :do {
+        /tool fetch \
+            address=$host \
+            port=21 \
+            mode=ftp \
+            upload=yes \
+            user=$usuario \
+            password=$senha \
+            src-path=$arquivoExport \
+            dst-path=($diretorio . "/" . $arquivoExport)
+        :set exportEnviado true
+        :log info ("EXPORT-ENVIO-OK-" . $identifica)
+    } on-error={
+        :log error ("EXPORT-ENVIO-FALHOU-" . $identifica)
+    }
+}
+
+# ===== REMOVER SOMENTE ARQUIVOS ENVIADOS =====
+:if ($backupEnviado = true) do={
+    :do {
+        /file remove [find where name=$arquivoBackup]
+        :log info ("BACKUP-LOCAL-REMOVIDO-" . $identifica)
+    } on-error={
+        :log warning ("BACKUP-LOCAL-NAO-REMOVIDO-" . $identifica)
+    }
+}
+
+:if ($exportEnviado = true) do={
+    :do {
+        /file remove [find where name=$arquivoExport]
+        :log info ("EXPORT-LOCAL-REMOVIDO-" . $identifica)
+    } on-error={
+        :log warning ("EXPORT-LOCAL-NAO-REMOVIDO-" . $identifica)
+    }
+}
+
+:if (($backupEnviado = true) && ($exportEnviado = true)) do={
+    :log warning ("BACKUP-COMPLETO-OK-" . $identifica)
+} else={
+    :log error ("BACKUP-COMPLETO-COM-FALHAS-" . $identifica)
+}
+
+:log warning "********** FIM-BACKUP-MIKROTIK **********"
